@@ -1,16 +1,4 @@
-#EXTM3U
 
-#EXTINF:-1 group-title="Movies",Pluto TV Movies
-https://plutotv-apple-amzn.amagi.tv/playlist.m3u8
-
-#EXTINF:-1 group-title="Movies",Pluto TV Action
-https://pluto-action-amzn.amagi.tv/playlist.m3u8
-
-#EXTINF:-1 group-title="Movies",Pluto TV Comedy
-https://pluto-comedy-amzn.amagi.tv/playlist.m3u8
-
-#EXTINF:-1 group-title="Movies",Pluto TV Drama
-https://pluto-drama-amzn.amagi.tv/playlist.m3u8
 
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Red_Bull_TV_logo.svg/1200px-Red_Bull_TV_logo.svg.png" group-title="Entertainment",Red Bull TV
 https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8
