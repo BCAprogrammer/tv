@@ -1,22 +1,19 @@
 #EXTM3U
 
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/France_24_logo.svg/1200px-France_24_logo.svg.png" group-title="News",France 24 English
+https://static.france24.com/live/F24_EN_LO_HLS/live_web.m3u8
+
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Bloomberg_logo.svg/1200px-Bloomberg_logo.svg.png" group-title="Business",Bloomberg TV
+https://bloomberg-bloombergtv-1-eu.rakuten.wurl.tv/playlist.m3u8
+
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/NASA_logo.svg/1200px-NASA_logo.svg.png" group-title="Science",NASA TV
 https://ntv1.akamaized.net/hls/live/2014075/NASA-NTV1-HLS/master.m3u8
 
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Red_Bull_TV_logo.svg/1200px-Red_Bull_TV_logo.svg.png" group-title="Entertainment",Red Bull TV
 https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8
 
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/France_24_logo.svg/1200px-France_24_logo.svg.png" group-title="News",France 24 English
-https://static.france24.com/live/F24_EN_LO_HLS/live_web.m3u8
-
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Bloomberg_logo.svg/1200px-Bloomberg_logo.svg.png" group-title="News",Bloomberg TV
-https://bloomberg-bloombergtv-1-eu.rakuten.wurl.tv/playlist.m3u8
-
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Fox_Broadcasting_Company_logo_%282019%29.svg/1200px-Fox_Broadcasting_Company_logo_%282019%29.svg.png" group-title="News",Fox News
 https://fox-foxnewsnow-samsungus.amagi.tv/playlist.m3u8
-
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/NASA_logo.svg/1200px-NASA_logo.svg.png" group-title="Science",NASA TV Public
-https://ntv2.akamaized.net/hls/live/2013923/NASA-NTV2-HLS/master.m3u8
 
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/ABC_News_logo.svg/1200px-ABC_News_logo.svg.png" group-title="News",ABC News Live
 https://abcnews-apple-live.akamaized.net/hls/live/2029643/abcnews1/master.m3u8
@@ -27,5 +24,8 @@ https://cheddar.samsung.wurl.tv/playlist.m3u8
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Reuters_logo.svg/1200px-Reuters_logo.svg.png" group-title="News",Reuters TV
 https://reuters-reutersnow-1-eu.rakuten.wurl.tv/playlist.m3u8
 
-#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/TYT_Network_logo.svg/1200px-TYT_Network_logo.svg.png" group-title="News",TYT (The Young Turks)
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/TYT_Network_logo.svg/1200px-TYT_Network_logo.svg.png" group-title="News",TYT Network
 https://tyt-network.amagi.tv/playlist.m3u8
+
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/NASA_logo.svg/1200px-NASA_logo.svg.png" group-title="Science",NASA TV Public
+https://ntv2.akamaized.net/hls/live/2013923/NASA-NTV2-HLS/master.m3u8
