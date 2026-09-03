@@ -491,337 +491,389 @@
     </div>
 
     <script>
-        // CHANGE THIS URL to your GitHub raw playlist URL
-        const PLAYLIST_URL = 'https://raw.githubusercontent.com/bcaprogrammer/tv/main/playlist.m3u';
+    // Your playlist URL
+    const PLAYLIST_URL = 'https://iptv-org.github.io/iptv/index.m3u';
+    
+    let channels = [];
+    let currentChannelIndex = -1;
+    let hls = null;
+    let video = document.getElementById('video-player');
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let isDownloading = false;
+    
+    // Update status
+    function updateStatus(text, state = 'loading') {
+        document.getElementById('status-text').textContent = text;
+        document.getElementById('status-dot').className = 'status-dot ' + state;
+    }
+    
+    // Parse M3U playlist
+    function parseM3U(content) {
+        const lines = content.split('\n');
+        const channels = [];
+        let currentChannel = null;
         
-        let channels = [];
-        let currentChannelIndex = -1;
-        let hls = null;
-        let video = document.getElementById('video-player');
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        let isDownloading = false;
-        
-        // Update status
-        function updateStatus(text, state = 'loading') {
-            document.getElementById('status-text').textContent = text;
-            document.getElementById('status-dot').className = 'status-dot ' + state;
-        }
-        
-        // Parse M3U playlist
-        function parseM3U(content) {
-            const lines = content.split('\n');
-            const channels = [];
-            let currentChannel = null;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
             
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
+            if (line.startsWith('#EXTINF')) {
+                const nameMatch = line.match(/,(.+)$/);
+                const groupMatch = line.match(/group-title="([^"]*)"/);
+                const logoMatch = line.match(/tvg-logo="([^"]*)"/);
                 
-                if (line.startsWith('#EXTINF')) {
-                    const nameMatch = line.match(/,(.+)$/);
-                    const groupMatch = line.match(/group-title="([^"]*)"/);
-                    const logoMatch = line.match(/tvg-logo="([^"]*)"/);
-                    
-                    currentChannel = {
-                        name: nameMatch ? nameMatch[1].trim() : 'Unknown Channel',
-                        group: groupMatch ? groupMatch[1] : 'General',
-                        logo: logoMatch ? logoMatch[1] : null,
-                        url: null
-                    };
-                } else if (line && !line.startsWith('#') && currentChannel) {
-                    currentChannel.url = line;
-                    channels.push(currentChannel);
-                    currentChannel = null;
-                }
-            }
-            
-            return channels;
-        }
-        
-        // Load playlist
-        async function loadPlaylist() {
-            updateStatus('Loading playlist...', 'loading');
-            
-            try {
-                const response = await fetch(PLAYLIST_URL);
-                if (!response.ok) {
-                    throw new Error(`Failed to load playlist: ${response.status}`);
-                }
-                
-                const content = await response.text();
-                channels = parseM3U(content);
-                
-                if (channels.length === 0) {
-                    throw new Error('No channels found in playlist');
-                }
-                
-                updateStatus(`${channels.length} channels`, '');
-                renderChannels(channels);
-                updateChannelCount();
-                enableChannelButtons();
-            } catch (error) {
-                console.error('Error loading playlist:', error);
-                updateStatus('Error', 'error');
-                showError(error.message);
-                renderEmptyState();
+                currentChannel = {
+                    name: nameMatch ? nameMatch[1].trim() : 'Unknown Channel',
+                    group: groupMatch ? groupMatch[1] : 'General',
+                    logo: logoMatch ? logoMatch[1] : null,
+                    url: null
+                };
+            } else if (line && !line.startsWith('#') && currentChannel) {
+                currentChannel.url = line;
+                channels.push(currentChannel);
+                currentChannel = null;
             }
         }
         
-        // Render channels
-        function renderChannels(channelList) {
-            const list = document.getElementById('channels-list');
-            
-            if (channelList.length === 0) {
-                renderEmptyState();
-                return;
+        return channels;
+    }
+    
+    // Load playlist with filtering
+    async function loadPlaylist() {
+        updateStatus('Loading channels...', 'loading');
+        
+        // Show loading message
+        document.getElementById('channels-list').innerHTML = `
+            <div class="empty-state">
+                <div class="loading-spinner"></div>
+                <p style="margin-top: 15px;">Loading channels...</p>
+                <p style="font-size: 12px; color: #666; margin-top: 5px;">Filtering working streams...</p>
+            </div>
+        `;
+        
+        try {
+            const response = await fetch(PLAYLIST_URL);
+            if (!response.ok) {
+                throw new Error(`Failed to load playlist: ${response.status}`);
             }
             
-            list.innerHTML = channelList.map((channel, index) => {
-                const globalIndex = channels.indexOf(channel);
-                return `
-                    <div class="channel-item ${globalIndex === currentChannelIndex ? 'active' : ''}" onclick="playChannel(${globalIndex})">
-                        <div class="channel-number">${globalIndex + 1}</div>
-                        <div class="channel-logo">
-                            ${channel.logo ? `<img src="${channel.logo}" alt="${channel.name}">` : channel.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div class="channel-info">
-                            <div class="channel-name">${channel.name}</div>
-                            <div class="channel-group">${channel.group}</div>
-                        </div>
+            const content = await response.text();
+            const allChannels = parseM3U(content);
+            
+            // FILTER OPTIONS - Choose your preferred filters below:
+            
+            // Option 1: Get first 50 channels (fastest)
+            channels = allChannels.slice(0, 50);
+            
+            // Option 2: Get only specific categories
+            // const allowedCategories = ['News', 'Music', 'Science', 'Entertainment'];
+            // channels = allChannels.filter(ch => allowedCategories.includes(ch.group));
+            
+            // Option 3: Filter by country (if available in group)
+            // channels = allChannels.filter(ch => ch.group.includes('US') || ch.group.includes('UK'));
+            
+            // Option 4: Get random 30 channels
+            // channels = allChannels.sort(() => Math.random() - 0.5).slice(0, 30);
+            
+            // Option 5: Filter out non-HLS streams (more likely to work)
+            // channels = allChannels.filter(ch => ch.url.includes('.m3u8')).slice(0, 50);
+            
+            if (channels.length === 0) {
+                throw new Error('No channels found after filtering');
+            }
+            
+            updateStatus(`${channels.length} channels`, '');
+            renderChannels(channels);
+            updateChannelCount();
+            enableChannelButtons();
+            
+            console.log(`✅ Loaded ${channels.length} channels from ${allChannels.length} total`);
+        } catch (error) {
+            console.error('Error loading playlist:', error);
+            updateStatus('Error', 'error');
+            showError(error.message);
+            renderEmptyState();
+        }
+    }
+    
+    // Render channels
+    function renderChannels(channelList) {
+        const list = document.getElementById('channels-list');
+        
+        if (channelList.length === 0) {
+            renderEmptyState();
+            return;
+        }
+        
+        list.innerHTML = channelList.map((channel, index) => {
+            const globalIndex = channels.indexOf(channel);
+            return `
+                <div class="channel-item ${globalIndex === currentChannelIndex ? 'active' : ''}" onclick="playChannel(${globalIndex})">
+                    <div class="channel-number">${globalIndex + 1}</div>
+                    <div class="channel-logo">
+                        ${channel.logo ? `<img src="${channel.logo}" alt="${channel.name}" onerror="this.style.display='none'; this.parentElement.textContent='${channel.name.charAt(0).toUpperCase()}'">` : channel.name.charAt(0).toUpperCase()}
                     </div>
-                `;
-            }).join('');
-        }
-        
-        function renderEmptyState() {
-            document.getElementById('channels-list').innerHTML = `
-                <div class="empty-state">
-                    <span class="icon">📭</span>
-                    <h3>No Channels Available</h3>
-                    <p>Unable to load channels. Please check the playlist URL.</p>
+                    <div class="channel-info">
+                        <div class="channel-name">${channel.name}</div>
+                        <div class="channel-group">${channel.group}</div>
+                    </div>
                 </div>
             `;
+        }).join('');
+    }
+    
+    function renderEmptyState() {
+        document.getElementById('channels-list').innerHTML = `
+            <div class="empty-state">
+                <span class="icon">📭</span>
+                <h3>No Channels Available</h3>
+                <p>Unable to load channels. Please check the playlist URL.</p>
+            </div>
+        `;
+    }
+    
+    function updateChannelCount() {
+        document.getElementById('channel-count').textContent = `${channels.length} channels`;
+    }
+    
+    function enableChannelButtons() {
+        document.getElementById('prev-btn').disabled = channels.length === 0;
+        document.getElementById('next-btn').disabled = channels.length === 0;
+        document.getElementById('download-btn').disabled = channels.length === 0;
+    }
+    
+    // Play channel
+    function playChannel(index) {
+        if (index < 0 || index >= channels.length) return;
+        
+        const channel = channels[index];
+        if (!channel || !channel.url) return;
+        
+        currentChannelIndex = index;
+        
+        // Update UI
+        document.querySelectorAll('.channel-item').forEach((item, i) => {
+            item.classList.toggle('active', i === index);
+        });
+        
+        document.getElementById('player-placeholder').style.display = 'none';
+        document.getElementById('download-btn').disabled = false;
+        
+        // Stop existing playback
+        stopPlayback();
+        
+        // Show loading status
+        updateStatus(`Loading: ${channel.name}...`, 'loading');
+        
+        // Play stream
+        if (channel.url.includes('.m3u8')) {
+            if (Hls.isSupported()) {
+                hls = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 90
+                });
+                
+                hls.loadSource(channel.url);
+                hls.attachMedia(video);
+                
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    video.play().catch(err => {
+                        console.error('Playback error:', err);
+                        showError('Unable to play this channel. Stream may be unavailable.');
+                    });
+                    updateStatus(`Playing: ${channel.name}`, '');
+                });
+                
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    if (data.fatal) {
+                        console.error('HLS Error:', data);
+                        showError(`Error playing ${channel.name}. Stream may be offline.`);
+                        updateStatus('Error', 'error');
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = channel.url;
+                video.play().catch(err => {
+                    console.error('Playback error:', err);
+                    showError('Unable to play this channel.');
+                });
+                updateStatus(`Playing: ${channel.name}`, '');
+            }
+        } else {
+            video.src = channel.url;
+            video.play().catch(err => {
+                console.error('Playback error:', err);
+                showError('Unable to play this channel.');
+            });
+            updateStatus(`Playing: ${channel.name}`, '');
         }
         
-        function updateChannelCount() {
-            document.getElementById('channel-count').textContent = `${channels.length} channels`;
+        // Scroll to active channel
+        const activeItem = document.querySelector('.channel-item.active');
+        if (activeItem) {
+            activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+    
+    function playNextChannel() {
+        if (channels.length === 0) return;
+        const nextIndex = (currentChannelIndex + 1) % channels.length;
+        playChannel(nextIndex);
+    }
+    
+    function playPreviousChannel() {
+        if (channels.length === 0) return;
+        const prevIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
+        playChannel(prevIndex);
+    }
+    
+    function stopPlayback() {
+        if (hls) {
+            hls.destroy();
+            hls = null;
+        }
+        video.pause();
+        video.src = '';
+        video.load();
+    }
+    
+    // Download current stream
+    function downloadCurrentStream() {
+        if (currentChannelIndex < 0 || currentChannelIndex >= channels.length) return;
+        
+        const channel = channels[currentChannelIndex];
+        
+        // For direct download links
+        if (!channel.url.includes('.m3u8')) {
+            const link = document.createElement('a');
+            link.href = channel.url;
+            link.download = `${channel.name}.mp4`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            return;
         }
         
-        function enableChannelButtons() {
-            document.getElementById('prev-btn').disabled = channels.length === 0;
-            document.getElementById('next-btn').disabled = channels.length === 0;
-            document.getElementById('download-btn').disabled = channels.length === 0;
+        // For HLS streams - use MediaRecorder
+        if (typeof MediaRecorder === 'undefined') {
+            alert('Download not supported in this browser. Try Chrome or Firefox.');
+            return;
         }
         
-        // Play channel
-        function playChannel(index) {
-            if (index < 0 || index >= channels.length) return;
-            
-            const channel = channels[index];
-            if (!channel || !channel.url) return;
-            
-            currentChannelIndex = index;
-            
-            // Update UI
-            document.querySelectorAll('.channel-item').forEach((item, i) => {
-                item.classList.toggle('active', i === index);
+        if (!video.src && !hls) {
+            alert('Please start playing the channel first.');
+            return;
+        }
+        
+        if (isDownloading) {
+            stopDownload();
+        }
+        
+        try {
+            const stream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
+            mediaRecorder = new MediaRecorder(stream, {
+                mimeType: 'video/webm'
             });
             
-            document.getElementById('player-placeholder').style.display = 'none';
-            document.getElementById('download-btn').disabled = false;
+            recordedChunks = [];
+            isDownloading = true;
             
-            // Stop existing playback
-            stopPlayback();
-            
-            // Play stream
-            if (channel.url.includes('.m3u8')) {
-                if (Hls.isSupported()) {
-                    hls = new Hls();
-                    hls.loadSource(channel.url);
-                    hls.attachMedia(video);
-                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                        video.play();
-                    });
-                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = channel.url;
-                    video.play();
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
                 }
-            } else {
-                video.src = channel.url;
-                video.play();
-            }
+            };
             
-            updateStatus(`Playing: ${channel.name}`, '');
-            
-            // Scroll to active channel
-            const activeItem = document.querySelector('.channel-item.active');
-            if (activeItem) {
-                activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
-        
-        function playNextChannel() {
-            if (channels.length === 0) return;
-            const nextIndex = (currentChannelIndex + 1) % channels.length;
-            playChannel(nextIndex);
-        }
-        
-        function playPreviousChannel() {
-            if (channels.length === 0) return;
-            const prevIndex = (currentChannelIndex - 1 + channels.length) % channels.length;
-            playChannel(prevIndex);
-        }
-        
-        function stopPlayback() {
-            if (hls) {
-                hls.destroy();
-                hls = null;
-            }
-            video.pause();
-            video.src = '';
-            video.load();
-        }
-        
-        // Download current stream
-        function downloadCurrentStream() {
-            if (currentChannelIndex < 0 || currentChannelIndex >= channels.length) return;
-            
-            const channel = channels[currentChannelIndex];
-            
-            // For direct download links
-            if (channel.url.includes('.mp4') || channel.url.includes('.m3u8') === false) {
-                // Direct download
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                link.href = channel.url;
-                link.download = `${channel.name}.mp4`;
+                link.href = url;
+                link.download = `${channel.name}.webm`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                return;
-            }
+                URL.revokeObjectURL(url);
+                
+                isDownloading = false;
+                document.getElementById('download-btn').style.display = 'flex';
+                document.getElementById('stop-download-btn').style.display = 'none';
+                document.getElementById('download-progress').classList.remove('visible');
+            };
             
-            // For HLS streams - use MediaRecorder
-            if (typeof MediaRecorder === 'undefined') {
-                alert('Download not supported in this browser. Try Chrome or Firefox.');
-                return;
-            }
+            mediaRecorder.start(1000);
             
-            // Check if video is playing
-            if (!video.src && !hls) {
-                alert('Please start playing the channel first.');
-                return;
-            }
+            document.getElementById('download-btn').style.display = 'none';
+            document.getElementById('stop-download-btn').style.display = 'flex';
+            document.getElementById('download-progress').classList.add('visible');
+            document.getElementById('download-title').textContent = `Downloading: ${channel.name}`;
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('progress-text').textContent = 'Recording...';
             
-            // Stop any existing download
-            if (isDownloading) {
-                stopDownload();
-            }
-            
-            try {
-                const stream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
-                mediaRecorder = new MediaRecorder(stream, {
-                    mimeType: 'video/webm'
-                });
-                
-                recordedChunks = [];
-                isDownloading = true;
-                
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                    }
-                };
-                
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = `${channel.name}.webm`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                    
-                    isDownloading = false;
-                    document.getElementById('download-btn').style.display = 'flex';
-                    document.getElementById('stop-download-btn').style.display = 'none';
-                    document.getElementById('download-progress').classList.remove('visible');
-                };
-                
-                mediaRecorder.start(1000); // Collect data every second
-                
-                // Update UI
-                document.getElementById('download-btn').style.display = 'none';
-                document.getElementById('stop-download-btn').style.display = 'flex';
-                document.getElementById('download-progress').classList.add('visible');
-                document.getElementById('download-title').textContent = `Downloading: ${channel.name}`;
-                document.getElementById('progress-fill').style.width = '0%';
-                document.getElementById('progress-text').textContent = 'Recording...';
-                
-                updateStatus(`Downloading: ${channel.name}`, 'loading');
-            } catch (error) {
-                console.error('Download error:', error);
-                alert('Unable to download stream. Try using a download manager or different browser.');
-            }
+            updateStatus(`Downloading: ${channel.name}`, 'loading');
+        } catch (error) {
+            console.error('Download error:', error);
+            alert('Unable to download stream. Try using a download manager or different browser.');
+        }
+    }
+    
+    function stopDownload() {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
         }
         
-        function stopDownload() {
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-            }
-            
-            isDownloading = false;
-            document.getElementById('download-btn').style.display = 'flex';
-            document.getElementById('stop-download-btn').style.display = 'none';
-            document.getElementById('download-progress').classList.remove('visible');
-            updateStatus('', '');
-        }
-        
-        // Filter channels
-        function filterChannels(query) {
-            const filtered = channels.filter(channel => 
-                channel.name.toLowerCase().includes(query.toLowerCase()) ||
-                channel.group.toLowerCase().includes(query.toLowerCase())
-            );
-            renderChannels(filtered);
-        }
-        
-        // Show error
-        function showError(message) {
-            const errorDiv = document.getElementById('error-message');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
-        }
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (event) => {
-            switch(event.key) {
-                case 'ArrowUp':
-                case 'ArrowLeft':
+        isDownloading = false;
+        document.getElementById('download-btn').style.display = 'flex';
+        document.getElementById('stop-download-btn').style.display = 'none';
+        document.getElementById('download-progress').classList.remove('visible');
+        updateStatus('', '');
+    }
+    
+    // Filter channels in search
+    function filterChannels(query) {
+        const filtered = channels.filter(channel => 
+            channel.name.toLowerCase().includes(query.toLowerCase()) ||
+            channel.group.toLowerCase().includes(query.toLowerCase())
+        );
+        renderChannels(filtered);
+    }
+    
+    // Show error
+    function showError(message) {
+        const errorDiv = document.getElementById('error-message');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
+    }
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (event) => {
+        switch(event.key) {
+            case 'ArrowUp':
+            case 'ArrowLeft':
+                event.preventDefault();
+                playPreviousChannel();
+                break;
+            case 'ArrowDown':
+            case 'ArrowRight':
+                event.preventDefault();
+                playNextChannel();
+                break;
+            case 'd':
+            case 'D':
+                if (event.ctrlKey || event.metaKey) {
                     event.preventDefault();
-                    playPreviousChannel();
-                    break;
-                case 'ArrowDown':
-                case 'ArrowRight':
-                    event.preventDefault();
-                    playNextChannel();
-                    break;
-                case 'd':
-                case 'D':
-                    if (event.ctrlKey || event.metaKey) {
-                        event.preventDefault();
-                        downloadCurrentStream();
-                    }
-                    break;
-            }
-        });
-        
-        // Initialize
-        loadPlaylist();
-    </script>
+                    downloadCurrentStream();
+                }
+                break;
+        }
+    });
+    
+    // Initialize
+    loadPlaylist();
+</script>
 </body>
 </html>
