@@ -828,7 +828,23 @@
         document.getElementById('stop-download-btn').style.display = 'none';
         document.getElementById('download-progress').classList.remove('visible');
         updateStatus('', '');
+        
     }
+        const PLAYLISTS = {
+    'Main': 'https://raw.githubusercontent.com/iptv-org/iptv/master/streams.m3u',
+    'Backup': 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8',
+    'Custom': ''
+            // User can add their own
+};
+
+function switchPlaylist(name) {
+    if (name === 'Custom') {
+        const url = prompt('Enter playlist URL:');
+        if (url) loadPlaylist(url);
+    } else {
+        loadPlaylist(PLAYLISTS[name]);
+    }
+}
     
     // Filter channels in search
     function filterChannels(query) {
