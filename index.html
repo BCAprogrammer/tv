@@ -492,15 +492,16 @@
 
     <script>
     // Your playlist URL
-    const PLAYLIST_URL = 'https://iptv-org.github.io/iptv/index.m3u';
-    
-    let channels = [];
-    let currentChannelIndex = -1;
-    let hls = null;
-    let video = document.getElementById('video-player');
-    let mediaRecorder = null;
-    let recordedChunks = [];
-    let isDownloading = false;
+    // Your playlist URL - points to YOUR playlist.m3u file
+const PLAYLIST_URL = 'https://raw.githubusercontent.com/bcaprogrammer/tv/main/playlist.m3u';
+
+let channels = [];
+let currentChannelIndex = -1;
+let hls = null;
+let video = document.getElementById('video-player');
+let mediaRecorder = null;
+let recordedChunks = [];
+let isDownloading = false;
     
     // Update status
     function updateStatus(text, state = 'loading') {
