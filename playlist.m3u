@@ -71,3 +71,9 @@ https://amg00627-banijaygroup-fearfactor-samsungnz-zhrro.amagi.tv/playlist/amg00
 
 #EXTINF:-1 tvg-id="",Beauty and the Beast
 https://jmp2.uk/plu-6512d36ca765070008836eac.m3u8
+
+#EXTINF:-1 tvg-id="RTVLOVE.nl@SD",RTV LOVE (720p)
+https://d2o8iss0ldenh4.cloudfront.net/nlpo/clr-nlpo/rtvlove/index.m3u8
+
+#EXTINF:-1 tvg-id="Film1Action.nl@SD",Film1 Action
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
