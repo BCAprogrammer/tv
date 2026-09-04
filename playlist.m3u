@@ -48,23 +48,5 @@ https://lds-realcrimebeta-rakuten.amagi.tv/playlist.m3u8
 #EXTINF:-1 tvg-id="HauntTV.ca@SD",Haunt TV
 https://bamcahaunttvrakuten.amagi.tv/playlist.m3u8
 
-#EXTINF:-1 tvg-id="TotallyTurtles.se@SE",Totally Turtles (720p)
-https://jmp2.uk/plu-61c185e36faf920007f04b6e.m3u8
-#EXTINF:-1 tvg-id="TruecrimefranViaplay.se@SE",True crime från Viaplay
-https://jmp2.uk/plu-645cb7857cb4b1000859c57c.m3u8
-#EXTINF:-1 tvg-id="",UFC (720p)
-https://jmp2.uk/plu-6792066f3de7c8cf941e7ce3.m3u8
-#EXTINF:-1 tvg-id="UngaMammor.se@SE",Unga Mammor
-https://jmp2.uk/plu-61c1900995f417000731a002.m3u8
-#EXTINF:-1 tvg-id="UnsolvedMysteries.us@US",Unsolved Mysteries
-https://jmp2.uk/plu-6181498caf6afc0007de9e72.m3u8
-#EXTINF:-1 tvg-id="ViafreeMovies.se@SE",Viafree Movies
-https://jmp2.uk/plu-62f64ec9eb1045000728cad6.m3u8
-#EXTINF:-1 tvg-id="WalkerTexasRanger.us@France",Walker Texas Ranger
-https://jmp2.uk/plu-62a0b114a1c8650007e93688.m3u8
-#EXTINF:-1 tvg-id="Wildfire.se@SE",Wildfire
-https://jmp2.uk/plu-62beb0de371e6c000775930c.m3u8
-#EXTINF:-1 tvg-id="",World of Love Island (720p)
-https://jmp2.uk/plu-6440f73ee94c380008ccddc8.m3u8
-#EXTINF:-1 tvg-id="WorldPokerTour.us@US",World Poker Tour
-https://jmp2.uk/plu-617805a67267650007573ffd.m3u8
+#EXTINF:-1 tvg-id="Hollywood.ru@SD",Hollywood HD (1080p)
+http://31.148.48.15/MGM_HD/index.m3u8
