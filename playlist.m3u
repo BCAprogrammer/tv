@@ -70,3 +70,6 @@ https://amg00627-banijaygroup-fearfactor-samsungnz-zhrro.amagi.tv/playlist/amg00
 
 #EXTINF:-1 tvg-id="SpacetoonArabic.ae@SD",Spacetoon Arabic (576p)
 https://live-uae-next.spacetoongo.com/ST_MENA_NEXT/hls/r9p2hjipmw2kl.m3u8
+
+#EXTINF:-1 tvg-id="Max.al@HD",Max (576p)
+http://5.254.89.106:80/8882/index.m3u8
