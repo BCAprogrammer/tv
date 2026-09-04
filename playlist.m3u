@@ -1,15 +1,11 @@
 #EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Red_Bull_TV_logo.svg/1200px-Red_Bull_TV_logo.svg.png" group-title="Entertainment",Red Bull TV
 https://rbmn-live.akamaized.net/hls/live/590964/BoRB-AT/master.m3u8
 
-#EXTINF:-1 tvg-id="Mythbusters.us@UK",Mythbusters (1080p)
+#EXTINF:-1 tvg-id="Mythbusters.us@UK",Mythbusters ()
 https://amg00627-amg00627c14-rakuten-uk-4802.playouts.now.amagi.tv/index.m3u8
 
-#EXTINF:-1 tvg-id="MAXAnime.ve@SD",MAX Anime (480p)
-https://cdnlive.klicgo.net/maxanime/live/playlist.m3u8
 
-#EXTINF:-1 tvg-id="FTV.uz@SD",FTV (576p)
-
-#EXTINF:-1 tvg-id="",American Ninja Warrior (1080p)
+#EXTINF:-1 tvg-id="",American Ninja Warrior ()
 https://xumo-drct-ch812-n4996.fast.nbcuni.com/live/master.m3u8
 
 #EXTINF:-1 tvg-id="DoctorWhoClassic.us@US",Doctor Who Classic
@@ -49,11 +45,8 @@ https://lds-realcrimebeta-rakuten.amagi.tv/playlist.m3u8
 
 #EXTINF:-1 tvg-id="HauntTV.ca@SD",Haunt TV (1080p)
 https://bamcahaunttvrakuten.amagi.tv/playlist.m3u8
-#EXTINF:-1 tvg-id="",A Haunting
-https://jmp2.uk/plu-64ff1d92d545e9000877fba4.m3u8
-#EXTINF:-1 tvg-id="",Barney & Friends
-https://jmp2.uk/plu-62ac405b3874370007419b7f.m3u8
-EXTINF:-1 tvg-id="",Mona The Vampire
+
+#EXTINF:-1 tvg-id="",Mona The Vampire
 https://jmp2.uk/plu-694178a8026be6e9d3ea7d7a.m3u8
 #EXTINF:-1 tvg-id="",Monkey
 https://jmp2.uk/plu-68e3c18130ee729844af1fca.m3u8
