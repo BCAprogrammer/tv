@@ -48,9 +48,8 @@ https://lds-realcrimebeta-rakuten.amagi.tv/playlist.m3u8
 #EXTINF:-1 tvg-id="HauntTV.ca@SD",Haunt TV
 https://bamcahaunttvrakuten.amagi.tv/playlist.m3u8
 
-#EXTINF:-1 tvg-id="1Plus1International.ua@SD",1+1 International
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36
-http://158.101.222.193:88/georgia_play.php?id=1plus1international
+#EXTINF:-1 tvg-id="GEMBollywood.tr@SD",GEM Bollywood
+https://ca-rt.onetv.app/gembollywood/index-0.m3u8?token=onetv202
 
 
 
