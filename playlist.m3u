@@ -48,8 +48,11 @@ https://lds-realcrimebeta-rakuten.amagi.tv/playlist.m3u8
 #EXTINF:-1 tvg-id="HauntTV.ca@SD",Haunt TV
 https://bamcahaunttvrakuten.amagi.tv/playlist.m3u8
 
-#EXTINF:-1 tvg-id="GEMBollywood.tr@SD",GEM Bollywood
-https://ca-rt.onetv.app/gembollywood/index-0.m3u8?token=onetv202
+#EXTINF:-1 tvg-id="WOWTV.sv@SD",WOW TV (720p)
+https://service.cdn-stream.com/wow/wow_tv/playlist.m3u8
+
+#EXTINF:-1 tvg-id="CrimeandEvidence.za@SD",Crime and Evidence (720p)
+https://afxporigin.telemedia.co.za/afxp/abr_crimeandevidence/playlist.m3u8
 
 
 
